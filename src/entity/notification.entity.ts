@@ -1,35 +1,37 @@
-
-import { Entity, Column, OneToOne, OneToMany } from 'typeorm';
-
-import { RelNotificationUser } from './rel-notification-user.entity';
-import { NotificationTopic } from './notification-topic.entity';
+import { Entity, Column, OneToMany, ManyToOne, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { NotificationStatus } from '../enum/notification-status';
+import { NotificationRecipient } from './notification-recipient.entity';
+import { NotificationTopic } from './notification-topic.entity';
 
-@Entity('notification')
-export class Notification extends BaseEntity {
-    @Column({ name: 'title', nullable: true })
-    title: string;
+@Entity('notifications')
+@Index(['status', 'scheduledAt'])
+export class NotificationEntity extends BaseEntity {
+  @Column()
+  title: string;
 
-    @Column({ name: 'message', nullable: true })
-    message: string;
+  @Column({ type: 'text' })
+  content: string;
 
-    @Column({ type: 'simple-enum', name: 'status', enum: NotificationStatus })
-    status: NotificationStatus;
+  @Column({
+    type: 'enum',
+    enum: NotificationStatus,
+    default: NotificationStatus.IMMEDIATE,
+  })
+  status: NotificationStatus;
 
-    @Column({ name: 'type', nullable: true })
-    type: string;
+  @Column({ type: 'jsonb', nullable: true })
+  templateData?: Record<string, any>;
 
-    @Column({ name: 'scope', nullable: true })
-    scope: string;
+  @Column({ type: 'timestamp', nullable: true })
+  scheduledAt?: Date;
 
-    @Column({ name: 'meta_data', nullable: true })
-    metaData: string;
+  @Column({ type: 'jsonb', nullable: true })
+  metadata?: Record<string, any>;
 
-    @OneToMany(type => RelNotificationUser, other => other.notification)
-    relNotificationUsers: RelNotificationUser[];
+  @ManyToOne(() => NotificationTopic, (topic) => topic.notifications)
+  topic?: NotificationTopic;
 
-    @OneToOne(type => NotificationTopic)
-    notificationTopic: NotificationTopic;
-
+  @OneToMany(() => NotificationRecipient, (recipient) => recipient.notification)
+  recipients: NotificationRecipient[];
 }

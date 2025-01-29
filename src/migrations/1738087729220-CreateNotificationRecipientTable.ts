@@ -1,10 +1,16 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 import { baseColumns } from '../utils/migrations/get-base-columns';
 
-export class CreateNotificationTable1738087729217
+export class CreateNotificationRecipientTable1738087729220
   implements MigrationInterface
 {
-  private tableName: string = 'notifications';
+  private tableName: string = 'notification_recipients';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const [idColumn, ...otherBaseColumns] = baseColumns;
@@ -15,33 +21,27 @@ export class CreateNotificationTable1738087729217
           columns: [
             idColumn,
             {
-              name: 'title',
-              type: 'varchar',
-              length: '255',
+              name: 'recipient_id',
+              type: 'uuid',
             },
             {
-              name: 'content',
-              type: 'text',
+              name: 'notification_id',
+              type: 'uuid',
             },
             {
               name: 'status',
               type: 'enum',
-              enum: ['SCHEDULED', 'IMMEDIATE'],
-              default: "'IMMEDIATE'",
+              enum: ['PENDING', 'DELIVERED', 'READ'],
+              default: "'PENDING'",
             },
             {
-              name: 'type',
-              type: 'varchar',
+              name: 'delivered_at',
+              type: 'timestampz',
               isNullable: true,
             },
             {
-              name: 'scope',
-              type: 'varchar',
-              isNullable: true,
-            },
-            {
-              name: 'scheduled_at',
-              type: 'timestamp',
+              name: 'read_at',
+              type: 'timestampz',
               isNullable: true,
             },
             {
@@ -59,8 +59,20 @@ export class CreateNotificationTable1738087729217
       await queryRunner.createIndex(
         this.tableName,
         new TableIndex({
-          name: `IDX_${this.tableName}_status_scheduled`,
-          columnNames: ['status', 'scheduled_at'],
+          name: `IDX_${this.tableName}_recipient_status`,
+          columnNames: ['recipient_id', 'status'],
+        }),
+      );
+
+      // Create foreign key
+      await queryRunner.createForeignKey(
+        this.tableName,
+        new TableForeignKey({
+          name: `FK_${this.tableName}_notification`,
+          columnNames: ['notification_id'],
+          referencedTableName: 'notifications',
+          referencedColumnNames: ['id'],
+          onDelete: 'CASCADE',
         }),
       );
     } catch (error) {
@@ -72,6 +84,9 @@ export class CreateNotificationTable1738087729217
   public async down(queryRunner: QueryRunner): Promise<void> {
     try {
       await queryRunner.dropTable(this.tableName, true);
+      await queryRunner.query(
+        `DROP TYPE IF EXISTS notification_delivery_status_enum;`,
+      );
     } catch (error) {
       console.error(`Failed to drop ${this.tableName} table:`, error);
       throw error;

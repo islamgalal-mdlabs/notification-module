@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 import { baseColumns } from '../utils/migrations/get-base-columns';
 
-export class CreateNotificationTable1738087729217
+export class CreateNotificationTopicTable1738087729218
   implements MigrationInterface
 {
-  private tableName: string = 'notifications';
+  private tableName: string = 'notification_topics';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const [idColumn, ...otherBaseColumns] = baseColumns;
@@ -15,34 +15,20 @@ export class CreateNotificationTable1738087729217
           columns: [
             idColumn,
             {
-              name: 'title',
+              name: 'name',
               type: 'varchar',
               length: '255',
+              isUnique: true,
             },
             {
-              name: 'content',
+              name: 'description',
               type: 'text',
-            },
-            {
-              name: 'status',
-              type: 'enum',
-              enum: ['SCHEDULED', 'IMMEDIATE'],
-              default: "'IMMEDIATE'",
-            },
-            {
-              name: 'type',
-              type: 'varchar',
               isNullable: true,
             },
             {
-              name: 'scope',
-              type: 'varchar',
-              isNullable: true,
-            },
-            {
-              name: 'scheduled_at',
-              type: 'timestamp',
-              isNullable: true,
+              name: 'is_active',
+              type: 'boolean',
+              default: true,
             },
             {
               name: 'metadata',
@@ -55,12 +41,12 @@ export class CreateNotificationTable1738087729217
         false,
       );
 
-      // Create indexes
       await queryRunner.createIndex(
         this.tableName,
         new TableIndex({
-          name: `IDX_${this.tableName}_status_scheduled`,
-          columnNames: ['status', 'scheduled_at'],
+          name: `IDX_${this.tableName}_name`,
+          columnNames: ['name'],
+          isUnique: true,
         }),
       );
     } catch (error) {

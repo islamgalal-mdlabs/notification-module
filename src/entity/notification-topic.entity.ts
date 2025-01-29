@@ -1,26 +1,28 @@
-import { Entity, Column, JoinColumn, OneToOne, ManyToMany, JoinTable } from 'typeorm';
-
-import { Notification } from './notification.entity';
-import { RelUserNotificationTopic } from './rel-user-notification-topic.entity';
+import { Entity, Column, OneToMany, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
+import { NotificationEntity } from './notification.entity';
+import { TopicSubscription } from './topic-subscription.entity';
 
-@Entity('notification_topic')
+@Entity('notification_topics')
+@Index(['name'], { unique: true })
 export class NotificationTopic extends BaseEntity {
-    @Column({ type: 'integer', name: 'topic_id', nullable: true })
-    topicId: number;
+  @Column({ unique: true })
+  name: string;
 
-    @Column({ name: 'topic_name', nullable: true })
-    topicName: string;
+  @Column({ type: 'text', nullable: true })
+  description?: string;
 
-    @OneToOne(type => Notification)
-    @JoinColumn()
-    notification: Notification;
+  @Column({ default: true })
+  isActive: boolean;
 
-    @ManyToMany(type => RelUserNotificationTopic)
-    @JoinTable({
-        name: 'rel_notification_topic__rel_user_notification_topic',
-        joinColumn: { name: 'notification_topic_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'rel_user_notification_topic_id', referencedColumnName: 'id' },
-    })
-    relUserNotificationTopics: RelUserNotificationTopic[];
+  @Column({ type: 'jsonb', nullable: true })
+  metadata?: Record<string, any>;
+
+  @OneToMany(() => NotificationEntity, notification => notification.topic)
+  notifications: NotificationEntity[];
+
+  @OneToMany(() => TopicSubscription, subscription => subscription.topic, {
+    cascade: true
+  })
+  subscriptions: TopicSubscription[];
 }
