@@ -1,5 +1,5 @@
 {
-  "name": "@islamgalal_mdlabs/notification-module",
+  "name": "islamgalal-mdlabs/notification-module",
   "version": "1.0.0",
   "description": "A reusable module for handling notifications in nestjs applications",
   "main": "dist/index.js",
