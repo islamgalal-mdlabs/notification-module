@@ -14,11 +14,11 @@ export class CreateTopicSubscriptionTable1738087729219 implements MigrationInter
             idColumn,
             {
               name: 'subscriber_id',
-              type: 'uuid',
+              type: 'BigInt',
             },
             {
               name: 'topic_id',
-              type: 'uuid',
+              type: 'BigInt',
             },
             {
               name: 'is_active',

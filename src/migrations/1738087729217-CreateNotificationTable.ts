@@ -26,7 +26,7 @@ export class CreateNotificationTable1738087729217
             {
               name: 'status',
               type: 'enum',
-              enum: ['SCHEDULED', 'IMMEDIATE'],
+              enum: ['SCHEDULED', 'IMMEDIATE', 'DRAFT'],
               default: "'IMMEDIATE'",
             },
             {

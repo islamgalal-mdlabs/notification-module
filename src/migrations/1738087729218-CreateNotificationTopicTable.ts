@@ -26,11 +26,6 @@ export class CreateNotificationTopicTable1738087729218
               isNullable: true,
             },
             {
-              name: 'is_active',
-              type: 'boolean',
-              default: true,
-            },
-            {
               name: 'metadata',
               type: 'jsonb',
               isNullable: true,

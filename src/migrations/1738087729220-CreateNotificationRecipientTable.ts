@@ -22,16 +22,16 @@ export class CreateNotificationRecipientTable1738087729220
             idColumn,
             {
               name: 'recipient_id',
-              type: 'uuid',
+              type: 'BigInt',
             },
             {
               name: 'notification_id',
-              type: 'uuid',
+              type: 'BigInt',
             },
             {
               name: 'status',
               type: 'enum',
-              enum: ['PENDING', 'DELIVERED', 'READ'],
+              enum: ['PENDING', 'FAILED', 'DELIVERED', 'READ'],
               default: "'PENDING'",
             },
             {

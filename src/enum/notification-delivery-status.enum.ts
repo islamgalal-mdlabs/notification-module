@@ -1,6 +1,6 @@
 export enum NotificationDeliveryStatus {
-  PENDING = 'pending',
-  DELIVERED = 'delivered',
-  FAILED = 'failed',
-  READ = 'read'
+  PENDING = 'PENDING',
+  DELIVERED = 'DELIVERED',
+  FAILED = 'FAILED',
+  READ = 'READ',
 } 

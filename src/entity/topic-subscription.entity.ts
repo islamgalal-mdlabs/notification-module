@@ -6,10 +6,7 @@ import { NotificationTopic } from './notification-topic.entity';
 @Index(['subscriberId', 'topic'])
 export class TopicSubscription extends BaseEntity {
   @Column()
-  subscriberId: string;
-
-  @Column({ default: true })
-  isActive: boolean;
+  subscriberId: number;
 
   @Column({ type: 'jsonb', nullable: true })
   preferences?: Record<string, any>;
